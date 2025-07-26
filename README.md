@@ -91,6 +91,18 @@ They are essentially disk images with the sofware, overlayed on `/usr` and `/opt
 Since they are mounted/overlayed relatively late during boot, they can't be used for kernel, udev rules etc.
 The fedora-sysexts collection contains software like libvirt, fd-find, etc.
 
+## Extra packages
+The list of extra packages (and groups) as well as the list of packages to remove from the base image are listed in files `pkglist-added` and `pkglist-removed`.
+`--allowerasing` means that dnf will uninstall existing packages in favor of new ones, in case of conflict.
+```
+COPY --chmod=0644 pkglist-added /usr/share/
+COPY --chmod=0644 pkglist-removed /usr/share/
+# List of packages originally in the upstream image
+#RUN jq -r .packages[] /usr/share > /usr/share/pkglist-orig
+RUN cat /usr/share/pkglist-added | xargs dnf -y install --allowerasing
+RUN cat /usr/share/pkglist-removed | xargs dnf -y remove --allowerasing
+```
+
 ## Incompleteness is a part of development; Kindly wait until this is complete
 
 # Extra info references
